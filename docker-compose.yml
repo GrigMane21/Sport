@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  web:
+    image: python:3.9-slim
+    container_name: sport_project_final
+    volumes:
+      - .:/code
+    working_dir: /code
+    ports:
+      - "5401:8000"
+    environment:
+      - PYTHONPATH=.
+      - DATABASE_URL=postgresql://postgres:password@83.149.198.142:5432/sport_db
+    command: >
+      sh -c "pip install fastapi uvicorn sqlalchemy psycopg2-binary && 
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
