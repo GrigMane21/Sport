@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 app = FastAPI(title="Sport Pro API")
 
@@ -29,3 +29,19 @@ def create_sport(sport: Sport):
         raise HTTPException(status_code=400, detail="Sport ID already exists")
     sports_db.append(sport.dict())
     return sport
+
+@app.put("/sports/{sport_id}")
+def update_sport(sport_id: int, updated_sport: Sport):
+    for index, sport in enumerate(sports_db):
+        if sport["id"] == sport_id:
+            sports_db[index] = updated_sport.dict()
+            return {"message": "Sport updated successfully"}
+    raise HTTPException(status_code=404, detail="Sport not found")
+
+@app.delete("/sports/{sport_id}")
+def delete_sport(sport_id: int):
+    for index, sport in enumerate(sports_db):
+        if sport["id"] == sport_id:
+            sports_db.pop(index)
+            return {"message": "Sport deleted successfully"}
+    raise HTTPException(status_code=404, detail="Sport not found")
