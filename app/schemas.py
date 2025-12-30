@@ -1,13 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
-class UserBase(BaseModel):
-    email: EmailStr
+class SportCreate(BaseModel):
     name: str
+    players_count: int
+    description: str
 
-class UserCreate(UserBase):
-    pass
-
-class User(UserBase):
+class SportResponse(SportCreate):
     id: int
 
     class Config:

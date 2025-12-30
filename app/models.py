@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String
 from .database import Base
 
-class Sport(Base):
+class SportItem(Base):
     __tablename__ = "sports"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    category = Column(String)
-    is_olympic = Column(Boolean, default=False)
+    name = Column(String)
+    players_count = Column(Integer)
+    description = Column(String)
+

@@ -1,19 +1,27 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from . import models, database
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
-models.Base.metadata.create_all(bind=database.engine)
+models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Sport Pro API")
+app = FastAPI()
 
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
-    finally:
-        db.close()
+    except Exception:
+        print("Database connection error")
+    
+    db.close()
 
-@app.get("/")
-def read_root():
-    return {"message": "Database linked and ready!", "docs_url": "/docs"}
+@app.get("/sports/", response_model=list[schemas.SportResponse])
+def read_sports(db: Session = Depends(get_db)):
+    return crud.get_all_sports(db)
+
+@app.post("/sports/", response_model=schemas.SportResponse)
+def add_sport(sport: schemas.SportCreate, db: Session = Depends(get_db)):
+    return crud.create_sport(db=db, sport=sport)
+
     
