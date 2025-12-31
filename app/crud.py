@@ -1,25 +1,27 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_teams(db: Session):
+    return db.query(models.Team).all()
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
-
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
-
-def create_user(db: Session, user: schemas.UserCreate):
-    db_user = models.User(email=user.email, name=user.name)
-    db.add(db_user)
+def create_team(db: Session, team: schemas.TeamCreate):
+    db_team = models.Team(name=team.name, city=team.city)
+    db.add(db_team)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_team)
+    return db_team
 
-def delete_user(db: Session, user_id: int):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user:
-        db.delete(db_user)
-        db.commit()
-    return db_user
+def get_players(db: Session):
+    return db.query(models.Player).all()
+
+def create_player(db: Session, player: schemas.PlayerCreate):
+    db_player = models.Player(
+        full_name=player.full_name,
+        position=player.position,
+        salary=player.salary,
+        team_id=player.team_id
+    )
+    db.add(db_player)
+    db.commit()
+    db.refresh(db_player)
+    return db_player

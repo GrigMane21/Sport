@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 
@@ -9,19 +10,14 @@ app = FastAPI()
 
 def get_db():
     db = SessionLocal()
-    try:
-        yield db
-    except Exception:
-        print("Database connection error")
-    
+    yield db
     db.close()
 
-@app.get("/sports/", response_model=list[schemas.SportResponse])
-def read_sports(db: Session = Depends(get_db)):
-    return crud.get_all_sports(db)
+@app.get("/teams/", response_model=List[schemas.TeamResponse])
+def read_teams(db: Session = Depends(get_db)):
+    return crud.get_teams(db)
 
-@app.post("/sports/", response_model=schemas.SportResponse)
-def add_sport(sport: schemas.SportCreate, db: Session = Depends(get_db)):
-    return crud.create_sport(db=db, sport=sport)
-
+@app.post("/teams/", response_model=schemas.TeamResponse)
+def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db)):
+    return crud.create_team(db=db, team=team)
     
